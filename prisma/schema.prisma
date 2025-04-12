@@ -5,13 +5,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Default datasource is SQLite for local development
+// Use environment variables to switch between local and production
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
-  // To switch to PostgreSQL, comment out the above and uncomment below:
-  // provider = "postgresql"
-  // url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // Connection string with pooling if available
+  directUrl = env("DIRECT_URL") // Direct connection string for migrations
 }
 
 model Participant {

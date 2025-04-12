@@ -15,7 +15,7 @@ A Next.js application that receives event participant data from Slack via Zapier
 - **Framework**: Next.js 14+ (App Router)
 - **Styling**: Tailwind CSS
 - **UI Components**: shadcn/ui
-- **Database**: Prisma ORM (configurable)
+- **Database**: PostgreSQL with Prisma ORM
 - **Deployment**: Vercel (recommended)
 
 ## Local Development Setup
@@ -23,7 +23,7 @@ A Next.js application that receives event participant data from Slack via Zapier
 ### Prerequisites
 
 - Node.js 18.x or later
-- npm or yarn
+- Docker and Docker Compose (for local PostgreSQL)
 
 ### Installation Steps
 
@@ -38,33 +38,49 @@ A Next.js application that receives event participant data from Slack via Zapier
 
    \`\`\`bash
    npm install
-   # or
-   yarn install
    \`\`\`
 
-3. **Set up the database**
-
-   The application is configured to use SQLite by default for local development.
+3. **Start the local PostgreSQL database**
 
    \`\`\`bash
-   # Initialize Prisma
-   npx prisma generate
+   docker-compose up -d
+   \`\`\`
 
-   # Create the database
+   This will start a PostgreSQL instance on port 5432.
+
+4. **Set up environment variables**
+
+   Copy the example environment file:
+
+   \`\`\`bash
+   cp .env.local.example .env.local
+   \`\`\`
+
+5. **Initialize the database**
+
+   \`\`\`bash
+   npx prisma generate
    npx prisma db push
    \`\`\`
 
-4. **Start the development server**
+6. **Start the development server**
 
    \`\`\`bash
    npm run dev
-   # or
-   yarn dev
    \`\`\`
 
-5. **Access the application**
+7. **Access the application**
 
    Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Switching Between Local and Production Databases
+
+The application is configured to use environment variables to determine which database to connect to:
+
+- For local development, it uses the PostgreSQL database running in Docker
+- For production, it uses the Supabase PostgreSQL database on Vercel
+
+When deploying to Vercel, make sure all the required environment variables are set in your Vercel project settings.
 
 ## Deployment
 
@@ -76,36 +92,12 @@ A Next.js application that receives event participant data from Slack via Zapier
    - Go to [Vercel](https://vercel.com)
    - Click "New Project"
    - Import your repository
-   - Configure project settings (environment variables if needed)
+   - Configure project settings with your Supabase environment variables
    - Click "Deploy"
 
-3. **Configure the database**
+3. **Verify database connection**
 
-   For production, you'll likely want to use a more robust database like PostgreSQL:
-
-   - Create a database on a provider like [Neon](https://neon.tech), [Supabase](https://supabase.com), or [Railway](https://railway.app)
-   - Get your database connection string
-   - Add it as an environment variable in Vercel:
-     - Name: `DATABASE_URL`
-     - Value: Your connection string
-
-   - Update your `prisma/schema.prisma` file:
-     ```prisma
-     datasource db {
-       provider = "postgresql"
-       url      = env("DATABASE_URL")
-     }
-     \`\`\`
-
-   - Run database migrations:
-     \`\`\`bash
-     npx prisma migrate deploy
-     \`\`\`
-
-### Environment Variables
-
-- `DATABASE_URL`: Your database connection string (required for production)
-- `NEXTAUTH_SECRET`: (Optional) If you add authentication later
+   After deployment, check the logs to ensure the application is connecting to your Supabase PostgreSQL database correctly.
 
 ## API Documentation
 
@@ -145,41 +137,6 @@ Success (201 Created):
   "appliedDate": "2023-04-12T12:34:56.789Z"
 }
 \`\`\`
-
-Error (400 Bad Request):
-\`\`\`json
-{
-  "error": "Missing required fields"
-}
-\`\`\`
-
-## Zapier Integration
-
-### Setting Up the Webhook
-
-1. **Create a new Zap in Zapier**
-2. **Choose Slack as your trigger app** (e.g., "New Channel Message")
-3. **Add an Action step** and select "Webhooks by Zapier"
-4. **Choose "POST" as the action**
-5. **Configure the webhook with these settings**:
-
-   - **URL**: `https://your-deployed-app.com/api/slack-event`
-   - **Payload Type**: `JSON`
-   - **Data**: Map the Slack fields to this JSON structure:
-
-   \`\`\`json
-   {
-     "name": "{{full_name}}",
-     "email": "{{email}}",
-     "username": "{{username}}",
-     "phone": "{{phone_number}}"
-   }
-   \`\`\`
-
-   Replace the values in `{{}}` with the actual field names from your Slack trigger.
-
-6. **Headers**: Add a header with `Content-Type` set to `application/json`
-7. **Test the Zap** to ensure it's working correctly
 
 ## License
 
