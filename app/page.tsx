@@ -4,7 +4,10 @@ import { Button } from "@/components/ui/button";
 
 export default async function Home() {
   // Fetch participant count from the API
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/participants/count`);
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/participants/count`, {
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     const errorText = await response.text(); // try to read error response
