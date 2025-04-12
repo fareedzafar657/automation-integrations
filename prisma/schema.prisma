@@ -1,0 +1,26 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Default datasource is SQLite for local development
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+  // To switch to PostgreSQL, comment out the above and uncomment below:
+  // provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+model Participant {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  username    String
+  phone       String?
+  appliedDate DateTime @default(now())
+
+  @@map("participants")
+}
