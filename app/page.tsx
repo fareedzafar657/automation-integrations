@@ -1,11 +1,18 @@
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { db } from "@/lib/db"
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default async function Home() {
-  // Count the number of participants for the card
-  const participantCount = await db.participant.count()
+  // Fetch participant count from the API
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/participants/count`);
+
+  if (!response.ok) {
+    const errorText = await response.text(); // try to read error response
+    throw new Error(`Failed to fetch participant count: ${response.status} ${response.statusText} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  const participantCount = data.count || 0;
 
   return (
     <main className="container mx-auto py-10">
@@ -30,5 +37,5 @@ export default async function Home() {
         {/* Additional event cards can be added here */}
       </div>
     </main>
-  )
+  );
 }

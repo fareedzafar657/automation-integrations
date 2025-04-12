@@ -1,13 +1,18 @@
-import { db } from "@/lib/db"
-import { formatDate } from "@/lib/utils"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function SlackEventPage() {
-  const participants = await db.participant.findMany({
-    orderBy: {
-      appliedDate: "desc",
-    },
-  })
+  // Fetch participants from the API
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/participants`, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Fetch failed: ${response.status} ${response.statusText} - ${errorText}`);
+    throw new Error("Failed to fetch participants.");
+  }
+
+  const participants = await response.json();
 
   return (
     <main className="container mx-auto py-10">
@@ -17,7 +22,7 @@ export default async function SlackEventPage() {
         <p className="text-muted-foreground">No participants have registered yet.</p>
       ) : (
         <div className="grid gap-6">
-          {participants.map((participant) => (
+          {participants.map((participant: any) => (
             <Card key={participant.id}>
               <CardHeader>
                 <CardTitle>{participant.name}</CardTitle>
@@ -38,7 +43,9 @@ export default async function SlackEventPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Applied Date</p>
-                    <p className="text-sm text-muted-foreground">{formatDate(new Date(participant.appliedDate))}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(participant.appliedDate).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -47,5 +54,5 @@ export default async function SlackEventPage() {
         </div>
       )}
     </main>
-  )
+  );
 }

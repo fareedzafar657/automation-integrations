@@ -1,34 +1,32 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { db } from "@/lib/db"
+import { type NextRequest, NextResponse } from "next/server";
+import { db, participants } from "../../../lib/db";
 
 export async function POST(request: NextRequest) {
   try {
     // Parse the incoming JSON data from Zapier/Slack
-    const data = await request.json()
+    const data = await request.json();
 
     // Extract the fields we need
-    const { name, email, username, phone } = data
+    const { name, email, username, phone } = data;
 
     // Validate required fields
     if (!name || !email || !username) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
     // Create a new participant record in the database
-    const participant = await db.participant.create({
-      data: {
-        name,
-        email,
-        username,
-        phone: phone || null,
-        appliedDate: new Date(),
-      },
-    })
+    const [participant] = await db.insert(participants).values({
+      name,
+      email,
+      username,
+      phone: phone || null,
+      appliedDate: new Date(),
+    }).returning();
 
     // Return the created participant
-    return NextResponse.json(participant, { status: 201 })
+    return NextResponse.json(participant, { status: 201 });
   } catch (error) {
-    console.error("Error processing Slack event:", error)
-    return NextResponse.json({ error: "Failed to process request" }, { status: 500 })
+    console.error("Error processing Slack event:", error);
+    return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
   }
 }
