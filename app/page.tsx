@@ -19,7 +19,7 @@ export default async function Home() {
 
   return (
     <main className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-8">Event Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8">Automation Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
