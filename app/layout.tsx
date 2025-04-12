@@ -3,6 +3,8 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
+import { ApiInfoBar } from "@/components/api-info-bar"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,6 +22,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ApiInfoBar />
           <div className="min-h-screen bg-background">
             <header className="border-b">
               <div className="container mx-auto py-4">
@@ -28,6 +31,7 @@ export default function RootLayout({
             </header>
             {children}
           </div>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
