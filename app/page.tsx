@@ -37,6 +37,21 @@ export default async function Home() {
           </CardFooter>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>Webhook Sender</CardTitle>
+            <CardDescription>Create and send custom data to any webhook</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">Build dynamic forms and send data to external webhooks</p>
+          </CardContent>
+          <CardFooter>
+            <Link href="/webhook-sender" className="w-full">
+              <Button className="w-full">Create Form</Button>
+            </Link>
+          </CardFooter>
+        </Card>
+
         {/* Additional event cards can be added here */}
       </div>
     </main>

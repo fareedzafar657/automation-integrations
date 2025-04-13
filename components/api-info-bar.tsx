@@ -4,14 +4,16 @@ import { useState } from "react"
 import { ChevronDown, ChevronUp, Copy, ExternalLink, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { toast } from "@/components/ui/use-toast"
 import { Badge } from "@/components/ui/badge"
+import { useToast } from "@/hooks/use-toast"
 
 export function ApiInfoBar() {
   const [isOpen, setIsOpen] = useState(false)
 
   const apiUrl = "https://automation-integrations.vercel.app/api/slack-event"
   const zapierTemplateUrl = "https://zapier.com/shared/59d3035e1a1d41a7d9dc18d61c163137cadd7daf"
+
+  const { toast } = useToast()
 
   const copyToClipboard = (text: string, message: string) => {
     navigator.clipboard.writeText(text)
